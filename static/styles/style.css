@@ -155,6 +155,18 @@ main {
     background-color: #003699;
 }
 
+header img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+header img {
+    width: 120px;
+    height: auto;
+    object-fit: contain;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
     header {
