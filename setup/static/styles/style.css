@@ -1,11 +1,27 @@
 :root {
+    /* Tema Claro (Padrão) */
     --primary-color: #0045C4;
-    --secondary-color: #F2F5F7;
+    --bg-color: #F2F5F7;
+    --card-bg: #FFFFFF;
+    --header-bg: #FFFFFF;
     --text-color: #2D3E50;
     --light-text: #69798A;
-    --white: #FFFFFF;
     --border-color: #E0E5E9;
-    --accent-color: #FF3B30;
+    --citation-bg: #f9f9f9;
+    --input-bg: #FFFFFF;
+}
+
+[data-theme="dark"] {
+    /* Tema Escuro */
+    --primary-color: #4D8BFF;
+    --bg-color: #0F172A;
+    --card-bg: #1E293B;
+    --header-bg: #1E293B;
+    --text-color: #F1F5F9;
+    --light-text: #94A3B8;
+    --border-color: #334155;
+    --citation-bg: #0F172A;
+    --input-bg: #334155;
 }
 
 * {
@@ -13,16 +29,17 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
 body {
-    background-color: var(--secondary-color);
+    background-color: var(--bg-color);
     color: var(--text-color);
     line-height: 1.6;
 }
 
 header {
-    background-color: var(--white);
+    background-color: var(--header-bg);
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 2rem;
     position: sticky;
@@ -34,11 +51,23 @@ header {
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
+header img {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
 .logo {
     font-size: 1.5rem;
     font-weight: 800;
     color: var(--primary-color);
     text-decoration: none;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 nav ul {
@@ -52,11 +81,28 @@ nav ul li a {
     color: var(--text-color);
     font-weight: 600;
     font-size: 1rem;
-    transition: color 0.3s;
 }
 
 nav ul li a:hover {
     color: var(--primary-color);
+}
+
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+}
+
+.theme-toggle:hover {
+    background-color: var(--border-color);
 }
 
 main {
@@ -72,12 +118,11 @@ main {
 }
 
 .faq-card {
-    background: var(--white);
+    background: var(--card-bg);
     border-radius: 8px;
     padding: 1.5rem;
     margin-bottom: 1.5rem;
     border: 1px solid var(--border-color);
-    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .faq-card:hover {
@@ -97,7 +142,7 @@ main {
 }
 
 .faq-citations {
-    background: #f9f9f9;
+    background: var(--citation-bg);
     padding: 1rem 1.5rem;
     border-left: 4px solid var(--primary-color);
     border-radius: 4px;
@@ -110,7 +155,7 @@ main {
 }
 
 .form-container {
-    background: var(--white);
+    background: var(--card-bg);
     padding: 2rem;
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -132,6 +177,8 @@ main {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1rem;
+    background-color: var(--input-bg);
+    color: var(--text-color);
 }
 
 .form-group input:focus, .form-group textarea:focus {
@@ -142,36 +189,28 @@ main {
 
 .btn-submit {
     background-color: var(--primary-color);
-    color: var(--white);
+    color: #FFFFFF;
     border: none;
     padding: 0.75rem 1.5rem;
     border-radius: 4px;
     font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-    background-color: #003699;
-}
-
-header img {
-    height: 50px;
-    width: auto;
-    object-fit: contain;
-}
-
-header img {
-    width: 120px;
-    height: auto;
-    object-fit: contain;
+    opacity: 0.9;
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     header {
         flex-direction: column;
         gap: 1rem;
+        padding: 1rem;
+    }
+    .nav-container {
+        width: 100%;
+        justify-content: space-between;
     }
     nav ul {
         gap: 1rem;

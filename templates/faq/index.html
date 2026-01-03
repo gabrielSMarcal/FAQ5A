@@ -1,6 +1,7 @@
 {% load static %}
+
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,13 +15,20 @@
 
     <header>
         <img src="{% static 'assets/5A.png' %}" alt="">
-        <nav>
-            <ul>
-                <li><a href="#faq">FAQ</a></li>
-                <li><a href="#colinhas">Colinhas</a></li>
-                <li><a href="#adicionar">Adicionar</a></li>
-            </ul>
-        </nav>
+        <div class="nav-container">
+            <nav>
+                <ul>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#colinhas">Colinhas</a></li>
+                    <li><a href="#adicionar">Adicionar</a></li>
+                </ul>
+            </nav>
+            <button class="theme-toggle" id="theme-toggle" title="Alternar modo claro/escuro">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+        </div>
     </header>
 
     <main>
@@ -28,7 +36,6 @@
         <section id="faq">
             <h1 class="section-title">FAQ de Atendimento</h1>
             
-            <!-- Exemplo de Item de FAQ -->
             <div class="faq-card">
                 <h2 class="faq-topic">Prazo de Estorno</h2>
                 <p class="faq-text">
@@ -59,7 +66,7 @@
             </div>
         </section>
 
-        <hr style="margin: 3rem 0; border: 0; border-top: 1px solid #E0E5E9;">
+        <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
 
         <!-- Seção Adicionar -->
         <section id="adicionar">
@@ -79,7 +86,7 @@
                     <div class="form-group">
                         <label for="citacoes">Citações (Opcional)</label>
                         <textarea id="citacoes" name="citacoes" rows="3" placeholder="Adicione referências separadas por linha..."></textarea>
-                        <small style="color: #69798A;">Cada linha será um item na lista de citações.</small>
+                        <small style="color: var(--light-text);">Cada linha será um item na lista de citações.</small>
                     </div>
 
                     <button type="submit" class="btn-submit">Salvar Informação</button>
@@ -88,9 +95,36 @@
         </section>
     </main>
 
-    <footer style="text-align: center; padding: 2rem; color: #69798A; font-size: 0.875rem;">
+    <footer style="text-align: center; padding: 2rem; color: var(--light-text); font-size: 0.875rem;">
         &copy; 2026 FAQ5A - Ferramenta de Apoio ao Atendimento
     </footer>
 
+    <script>
+        const themeToggle = document.getElementById('theme-toggle');
+        const html = document.documentElement;
+        const themeIcon = document.getElementById('theme-icon');
+
+        // Ícones SVG para Sol e Lua
+        const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+        const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            themeIcon.innerHTML = newTheme === 'light' ? moonIcon : sunIcon;
+            
+            // Salvar preferência no localStorage
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Carregar tema salvo
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            html.setAttribute('data-theme', savedTheme);
+            themeIcon.innerHTML = savedTheme === 'light' ? moonIcon : sunIcon;
+        }
+    </script>
 </body>
 </html>
