@@ -1,0 +1,3 @@
+# Ignorar arquivos vendor/admin do Django nas estatísticas
+static/admin/** linguist-vendored
+static/assets/** linguist-vendored
