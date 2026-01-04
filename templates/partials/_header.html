@@ -4,7 +4,16 @@
         <div class="nav-container">
             <nav>
                 <ul>
-                    <li><a href="{% url 'index' %}">FAQ</a></li>
+                    <li class="dropdown">
+                        <a href="{% url 'index' %}" class="dropdown-toggle">FAQ</a>
+                        <div class="dropdown-content">
+                            {% for t in topicos_menu %}
+                                <a href="{% url 'index_com_id' t.id %}">{{ t.titulo }}</a>
+                            {% empty %}
+                                <a href="{% url 'adicionar' %}">Nenhum tópico cadastrado, clique aqui para adicionar</a>
+                            {% endfor %}
+                        </div>
+                    </li>
                     <li><a href="{% url 'colinhas' %}">Colinhas</a></li>
                     <li><a href="{% url 'adicionar' %}">Adicionar</a></li>
                 </ul>

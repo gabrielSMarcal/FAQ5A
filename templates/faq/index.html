@@ -6,35 +6,32 @@
         <section id="faq">
             <h1 class="section-title">FAQ de Atendimento</h1>
             
-            <div class="faq-card">
-                <h2 class="faq-topic">Prazo de Estorno</h2>
-                <p class="faq-text">
-                    O estorno de valores para pagamentos via cartão de crédito pode levar até duas faturas para ser visualizado pelo cliente, dependendo do fechamento do cartão.
-                </p>
-                <div class="faq-citations">
-                    <p><strong>Citações/Referências:</strong></p>
-                    <ul>
-                        <li>Política de Reembolso Art. 42</li>
-                        <li>Código de Defesa do Consumidor</li>
-                        <li>Procedimento Interno de Finanças v2.0</li>
-                    </ul>
+            {% if topico %}
+                <div class="faq-card">
+                    <h2 class="faq-topic">{{ topico.titulo }}</h2>
+                    <p class="faq-text">
+                        {{ topico.descricao|linebreaksbr }}
+                    </p>
+                    
+                    {% if topico.citacoes.all %}
+                    <div class="faq-citations">
+                        <p><strong>Citações/Referências:</strong></p>
+                        <ul>
+                            {% for citacao in topico.citacoes.all %}
+                                <li>{{ citacao.texto }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
                 </div>
-            </div>
-
-            <div class="faq-card">
-                <h2 class="faq-topic">Cancelamento de Reserva</h2>
-                <p class="faq-text">
-                    O cancelamento pode ser solicitado em até 7 dias após a confirmação, sem custos adicionais, desde que a chave ainda não tenha sido entregue.
-                </p>
-                <div class="faq-citations">
-                    <p><strong>Citações/Referências:</strong></p>
-                    <ul>
-                        <li>Cláusula 15 do Contrato de Locação</li>
-                        <li>Direito de Arrependimento (Online)</li>
-                    </ul>
+            {% else %}
+                <div class="faq-card">
+                    <p class="faq-text">Por gentileza, selecione um tópico.</p>
+                    <a href="{% url 'adicionar' %}" class="btn-submit" style="text-decoration: none; display: inline-block; margin-top: 1rem;">Adicionar Primeiro Tópico</a>
                 </div>
-            </div>
+            {% endif %}
         </section>
 
-        <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">    </main>
+        <hr style="margin: 3rem 0; border: 0; border-top: 1px solid var(--border-color);">
+    </main>
 {% endblock %}

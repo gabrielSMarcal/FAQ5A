@@ -1,10 +1,14 @@
 from django.shortcuts import render
 from .models import Topico, Citacao
 
-def index(request):
-    topicos = Topico.objects.all().prefetch_related('citacoes')
+def index(request, topico_id=None):
+    if topico_id:
+        topico_selecionado = Topico.objects.prefetch_related('citacoes').get(id=topico_id)
+    else:
+        topico_selecionado = Topico.objects.prefetch_related('citacoes').first()
+        
     context = {
-        'topicos': topicos
+        'topico': topico_selecionado
     }
     return render(request, 'faq/index.html', context)
 
