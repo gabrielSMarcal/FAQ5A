@@ -1,7 +1,12 @@
 from django.shortcuts import render
+from .models import Topico, Citacao
 
 def index(request):
-    return render(request, 'faq/index.html')
+    topicos = Topico.objects.all().prefetch_related('citacoes')
+    context = {
+        'topicos': topicos
+    }
+    return render(request, 'faq/index.html', context)
 
 def adicionar(request):
     if request.method == 'POST':
