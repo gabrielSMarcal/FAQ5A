@@ -201,6 +201,72 @@ main {
     opacity: 0.9;
 }
 
+/* Estilos para Colinhas */
+.colinhas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.colinha-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s;
+}
+
+.colinha-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.colinha-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+}
+
+.colinha-text {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    background: var(--bg-color);
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    white-space: pre-wrap;
+    border: 1px dashed var(--border-color);
+}
+
+.btn-copy {
+    background-color: var(--primary-color);
+    color: #FFFFFF;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.btn-copy:hover {
+    opacity: 0.9;
+}
+
+.btn-copy.copied {
+    background-color: #22C55E;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     header {

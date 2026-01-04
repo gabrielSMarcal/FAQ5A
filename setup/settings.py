@@ -24,6 +24,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'colinha.apps.ColinhaConfig',
     'faq.apps.FaqConfig',
     
     'django.contrib.admin',
