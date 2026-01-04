@@ -1,5 +1,6 @@
-from django.shortcuts import render
-from .models import Topico, Citacao
+from django.shortcuts import render, redirect
+from .models import Topico
+from .forms import CitacaoFormSet, TopicoForm
 
 def index(request, topico_id=None):
     if topico_id:
@@ -14,6 +15,19 @@ def index(request, topico_id=None):
 
 def adicionar(request):
     if request.method == 'POST':
-        # Lógica para processar o formulário de adição de FAQ
-        pass
-    return render(request, 'faq/adicionar.html')
+        form = TopicoForm(request.POST)
+        formset = CitacaoFormSet(request.POST)
+        
+        if form.is_valid() and formset.is_valid():
+            topico = form.save()
+            formset.instance = topico
+            formset.save()
+            return redirect('index_com_id', topico_id=topico.id)
+    else:
+        form = TopicoForm()
+        formset = CitacaoFormSet()
+    
+    return render(request, 'faq/adicionar.html', {
+        'form': form,
+        'formset': formset
+    })

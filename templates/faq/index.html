@@ -3,19 +3,17 @@
 {% block content %}
     <main>
         <!-- Seção FAQ -->
-        <section id="faq">
-            <h1 class="section-title">FAQ de Atendimento</h1>
-            
+        <section id="faq">            
             {% if topico %}
+            <h1 class="section-title">{{ topico.titulo }}</h1>
                 <div class="faq-card">
-                    <h2 class="faq-topic">{{ topico.titulo }}</h2>
                     <p class="faq-text">
                         {{ topico.descricao|linebreaksbr }}
                     </p>
                     
                     {% if topico.citacoes.all %}
                     <div class="faq-citations">
-                        <p><strong>Citações/Referências:</strong></p>
+                        <p><strong>Observações:</strong></p>
                         <ul>
                             {% for citacao in topico.citacoes.all %}
                                 <li>{{ citacao.texto }}</li>

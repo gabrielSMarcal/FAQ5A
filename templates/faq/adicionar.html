@@ -7,29 +7,80 @@
             <p style="margin-bottom: 2rem; color: var(--light-text);">Preencha as informações abaixo para cadastrar uma nova orientação para o time de atendimento.</p>
             
             <div class="form-container">
-                <form action="#">
+                <form method="POST">
+                    {% csrf_token %}
+                    
+                    <!-- Campos do Tópico -->
                     <div class="form-group">
-                        <label for="topico">Tópico do Assunto</label>
-                        <input type="text" id="topico" name="topico" placeholder="Ex: Atraso na Entrega" required>
+                        <label for="{{ form.titulo.id_for_label }}">Tópico do Assunto</label>
+                        {{ form.titulo }}
+                        {% if form.titulo.errors %}
+                            <div style="color: #EF4444; font-size: 0.8rem;">{{ form.titulo.errors }}</div>
+                        {% endif %}
                     </div>
 
                     <div class="form-group">
-                        <label for="texto">Texto Explicativo</label>
-                        <textarea id="texto" name="texto" rows="8" placeholder="Descreva o assunto detalhadamente..." required></textarea>
+                        <label for="{{ form.descricao.id_for_label }}">Texto Explicativo</label>
+                        {{ form.descricao }}
+                        {% if form.descricao.errors %}
+                            <div style="color: #EF4444; font-size: 0.8rem;">{{ form.descricao.errors }}</div>
+                        {% endif %}
                     </div>
 
+                    <!-- Seção de Citações Dinâmicas -->
                     <div class="form-group">
-                        <label for="citacoes">Citações (Opcional)</label>
-                        <textarea id="citacoes" name="citacoes" rows="4" placeholder="Adicione referências separadas por linha..."></textarea>
-                        <small style="color: var(--light-text);">Cada linha inserida aqui será transformada em um item da lista de citações.</small>
+                        <label>Citações (Opcional)</label>
+                        {{ formset.management_form }}
+                        <div id="citacoes-container">
+                            {% for f in formset %}
+                                <div class="citacao-item">
+                                    {{ f.texto }}
+                                    {% if formset.can_delete %}
+                                        <div style="display:none;">{{ f.DELETE }}</div>
+                                    {% endif %}
+                                    {% for hidden in f.hidden_fields %}
+                                        {{ hidden }}
+                                    {% endfor %}
+                                </div>
+                                {% if f.texto.errors %}
+                                    <div style="color: #EF4444; font-size: 0.8rem; margin-bottom: 0.5rem;">{{ f.texto.errors }}</div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <button type="button" id="add-citacao" class="btn-add">+ Adicionar Citação</button>
                     </div>
 
                     <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                         <button type="submit" class="btn-submit">Salvar Informação</button>
-                        <a href="index.html" style="text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); font-weight: 600; text-align: center;">Cancelar</a>
+                        <a href="{% url 'index' %}" style="text-decoration: none; padding: 0.75rem 1.5rem; border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); font-weight: 600; text-align: center;">Cancelar</a>
                     </div>
                 </form>
             </div>
         </section>
     </main>
+
+    <!-- Script para Adição Dinâmica de Campos -->
+    <script>
+        document.getElementById('add-citacao').addEventListener('click', function() {
+            const container = document.getElementById('citacoes-container');
+            const totalForms = document.getElementById('id_citacoes-TOTAL_FORMS');
+            const currentCount = parseInt(totalForms.value);
+            
+            // Clonar o primeiro item de citação
+            const firstItem = container.querySelector('.citacao-item');
+            const newItem = firstItem.cloneNode(true);
+            
+            // Limpar o valor do novo input e atualizar os IDs/Names
+            const input = newItem.querySelector('input[type="text"]');
+            input.value = '';
+            
+            // Atualizar atributos name e id para o novo índice
+            const nameRegex = new RegExp(`citacoes-(\\d+)-`, 'g');
+            newItem.innerHTML = newItem.innerHTML.replace(nameRegex, `citacoes-${currentCount}-`);
+            
+            // Adicionar ao container e atualizar o contador do Django
+            container.appendChild(newItem);
+            totalForms.value = currentCount + 1;
+        });
+    </script>
 {% endblock %}
