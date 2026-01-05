@@ -2,11 +2,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import os
+import sys
 
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Adicionar a pasta apps ao path do Python
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,6 +30,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'colinha.apps.ColinhaConfig',
     'faq.apps.FaqConfig',
+    'usuarios.apps.UsuariosConfig',
     
     'django.contrib.admin',
     'django.contrib.auth',
