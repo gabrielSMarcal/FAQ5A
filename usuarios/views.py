@@ -11,7 +11,7 @@ def login(request):
         form = LoginForms(request.POST)
         
         if form.is_valid():
-            nome=form['nome_login'].value()
+            nome=form['nome_login'].value().lower()
             senha=form['senha'].value()
             
             usuario = auth.authenticate(
@@ -37,7 +37,7 @@ def cadastro(request):
         
         if form.is_valid():
             
-            nome=form['nome_cadastro'].value()
+            nome=form['nome_cadastro'].value().lower()
             email=form['email'].value()
             senha=form['senha_1'].value()
 

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main style="display: flex; justify-content: center; align-items: center; min-height: 70vh;">
+    <div class="form-container" style="width: 100%; max-width: 400px;">
+        <h1 class="section-title" style="text-align: center; margin-bottom: 1rem;">Login</h1>
+        <p style="text-align: center; color: var(--light-text); margin-bottom: 2rem;">Acesse sua conta para gerenciar o FAQ.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div style="padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 0.9rem; 
+                    {% if message.tags == 'error' %} background-color: #FEE2E2; color: #991B1B; border: 1px solid #F87171;
+                    {% else %} background-color: #DCFCE7; color: #166534; border: 1px solid #4ADE80; {% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form action="{% url 'login' %}" method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.nome_login.id_for_label }}">Usuário</label>
+                {{ form.nome_login }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.senha.id_for_label }}">Senha</label>
+                {{ form.senha }}
+            </div>
+
+            <button type="submit" class="btn-submit" style="width: 100%; margin-top: 1rem;">Entrar</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem;">
+            <span style="color: var(--light-text);">Não tem uma conta?</span>
+            <a href="{% url 'cadastro' %}" style="color: var(--primary-color); font-weight: 600; text-decoration: none; margin-left: 0.5rem;">Criar conta</a>
+        </div>
+    </div>
+</main>
+{% endblock %}

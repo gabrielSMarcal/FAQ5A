@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Topico
-from .forms import CitacaoFormSet, TopicoForm
+from django.contrib.auth.decorators import login_required
 
+from .models import Topico
+from .forms import TopicoForm, CitacaoFormSet
+
+@login_required
 def index(request, topico_id=None):
     if topico_id:
         topico_selecionado = Topico.objects.prefetch_related('citacoes').get(id=topico_id)
@@ -13,6 +16,7 @@ def index(request, topico_id=None):
     }
     return render(request, 'faq/index.html', context)
 
+@login_required
 def adicionar(request):
     if request.method == 'POST':
         form = TopicoForm(request.POST)

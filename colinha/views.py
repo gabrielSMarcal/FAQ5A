@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
 from .models import Colinha
 from .forms import ColinhaForm
 
+@login_required
 def index(request):
     colinhas_list = Colinha.objects.all().order_by('-criado_em')
     form = ColinhaForm()

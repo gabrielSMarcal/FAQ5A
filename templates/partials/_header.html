@@ -1,11 +1,12 @@
 {% load static %}
 <header>
     <a href="{% url 'index' %}">
-    <img src="{% static 'assets/5A.png' %}" alt="Logo">
+        <img src="{% static 'assets/5A.png' %}" alt="Logo">
     </a>
         <div class="nav-container">
             <nav>
                 <ul>
+                    {% if user.is_authenticated %}
                     <li class="dropdown">
                         <a href="{% url 'index' %}" class="dropdown-toggle">Assuntos</a>
                         <div class="dropdown-content">
@@ -18,6 +19,8 @@
                     </li>
                     <li><a href="{% url 'colinhas' %}">Colinhas</a></li>
                     <li><a href="{% url 'adicionar' %}">Adicionar</a></li>
+                        <li><a href="{% url 'logout' %}" style="color: var(--accent-color);">Sair</a></li>
+                    {% endif %}
                 </ul>
             </nav>
             <button class="theme-toggle" id="theme-toggle" title="Alternar modo claro/escuro">
