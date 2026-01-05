@@ -10,6 +10,10 @@ class Topico(models.Model):
     def __str__(self):
         return self.titulo
     
+    class Meta:
+        verbose_name = "Tópico"
+        verbose_name_plural = "Tópicos"
+
 class Citacao(models.Model):
     
     texto = models.TextField()
@@ -18,3 +22,7 @@ class Citacao(models.Model):
     def __str__(self):
         return self.texto[:20]
     
+    class Meta:
+        verbose_name = "Citação"
+        verbose_name_plural = "Citações"
+
