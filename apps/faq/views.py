@@ -1,5 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .models import Topico
 from .forms import TopicoForm, CitacaoFormSet
@@ -7,9 +8,15 @@ from .forms import TopicoForm, CitacaoFormSet
 @login_required
 def index(request, topico_id=None):
     if topico_id:
-        topico_selecionado = Topico.objects.prefetch_related('citacoes').get(id=topico_id)
+        topico_selecionado = get_object_or_404(
+            Topico.objects.prefetch_related('citacoes'),
+            id=topico_id,
+            usuario=request.user
+        )
     else:
-        topico_selecionado = Topico.objects.prefetch_related('citacoes').first()
+        topico_selecionado = Topico.objects.filter(
+            usuario=request.user
+        ).prefetch_related('citacoes').first()
         
     context = {
         'topico': topico_selecionado
@@ -23,9 +30,12 @@ def adicionar(request):
         formset = CitacaoFormSet(request.POST)
         
         if form.is_valid() and formset.is_valid():
-            topico = form.save()
+            topico = form.save(commit=False)
+            topico.usuario = request.user
+            topico.save()
             formset.instance = topico
             formset.save()
+            messages.success(request, 'Tópico adicionado com sucesso!')
             return redirect('index_com_id', topico_id=topico.id)
     else:
         form = TopicoForm()

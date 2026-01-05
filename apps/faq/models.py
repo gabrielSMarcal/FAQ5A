@@ -1,9 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Topico(models.Model):
     
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='topicos')
     criado_em = models.DateTimeField("data de criação", auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
     

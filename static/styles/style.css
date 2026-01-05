@@ -434,6 +434,50 @@ main {
     transform: translateY(0);
 }
 
+/* ===== COLINHAS PAGE STYLES ===== */
+.btn-favorito {
+    transition: all 0.3s ease;
+}
+
+.btn-favorito.active {
+    color: var(--primary-color);
+}
+
+.btn-favorito:hover {
+    color: var(--primary-color);
+}
+
+.drag-handle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: move;
+    color: var(--light-text);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.draggable-card {
+    position: relative;
+    transition: opacity 0.2s;
+}
+
+.draggable-card:hover .drag-handle {
+    opacity: 1;
+}
+
+.draggable-card.dragging {
+    opacity: 0.4;
+}
+
+.drag-placeholder {
+    min-height: 150px;
+}
+
+.sortable-grid {
+    min-height: 100px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     header {

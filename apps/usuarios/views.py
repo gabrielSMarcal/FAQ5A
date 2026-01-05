@@ -4,6 +4,8 @@ from django.shortcuts import redirect, render
 
 from .forms import LoginForms, CadastroForms
 
+
+
 def login(request):
     form = LoginForms()
     
@@ -21,7 +23,8 @@ def login(request):
             )
             if usuario is not None:
                 auth.login(request, usuario)
-                messages.success(request, f'{nome} logado com sucesso!')
+                nome = nome.capitalize()
+                messages.success(request, f'{nome} logado(a) com sucesso!')
                 return redirect('index')
             else:
                 messages.error(request, 'Usuário ou Senha incorretos, tente novamente')
@@ -51,7 +54,8 @@ def cadastro(request):
                 password=senha
             )
             usuario.save()
-            messages.success(request, f'Usuário {nome} cadastrado com sucesso!')
+            nome = nome.capitalize()
+            messages.success(request, f'Usuário {nome} cadastrado(a) com sucesso!')
             return redirect('login')
             
     return render(request, 'usuarios/cadastro.html', {'form': form})

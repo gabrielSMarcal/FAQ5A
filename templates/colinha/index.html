@@ -6,13 +6,67 @@
     <h1 class="section-title">Minhas Colinhas</h1>
     <p style="color: var(--light-text); margin-bottom: 1rem;">Textos rápidos para copiar e colar no atendimento.</p>
 
-    <div class="colinhas-grid">
-        {% for colinha in colinhas %}
-        <div class="colinha-card">
+    <!-- URLs ocultas para JavaScript -->
+    <div id="toggle-favorito-url" data-url="{% url 'toggle_favorito' 0 %}" style="display: none;"></div>
+    <div id="editar-colinha-url" data-url="{% url 'editar_colinha' 0 %}" style="display: none;"></div>
+    <div id="excluir-colinha-url" data-url="{% url 'excluir_colinha' 0 %}" style="display: none;"></div>
+    <div id="reordenar-colinhas-url" data-url="{% url 'reordenar_colinhas' %}" style="display: none;"></div>
+
+    <!-- Seção de Favoritos -->
+    {% if colinhas_favoritas %}
+    <div style="margin-bottom: 2rem;">
+        <h2 style="color: var(--primary-color); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+            Favoritas
+        </h2>
+        <div class="colinhas-grid sortable-grid" id="favoritas-grid" data-tipo="favorito">
+            {% for colinha in colinhas_favoritas %}
+            <div class="colinha-card draggable-card" draggable="true" data-id="{{ colinha.pk }}">
+                <div class="drag-handle" title="Arrastar para reordenar">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <h3 class="colinha-title" style="margin-bottom: 0;">{{ colinha.titulo }}</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn-icon btn-favorito active" onclick="toggleFavorito({{ colinha.pk }}, this)" title="Remover dos favoritos">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            </button>
+                            <button class="btn-icon" onclick="abrirModalEdicao({{ colinha.pk }}, '{{ colinha.titulo|escapejs }}', `{{ colinha.conteudo|escapejs }}`)" title="Editar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                            </button>
+                            <button class="btn-icon btn-icon-danger" onclick="abrirModalExclusao({{ colinha.pk }}, '{{ colinha.titulo|escapejs }}')" title="Excluir">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="colinha-text" id="colinha-{{ colinha.pk }}">{{ colinha.conteudo }}</div>
+                </div>
+                <button class="btn-copy" onclick="copyToClipboard('colinha-{{ colinha.pk }}', this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copiar
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Seção de Colinhas Normais -->
+    <h2 style="color: var(--text-color); margin-bottom: 1rem;">Todas as Colinhas</h2>
+    <div class="colinhas-grid sortable-grid" id="normais-grid" data-tipo="normal">
+        {% for colinha in colinhas_normais %}
+        <div class="colinha-card draggable-card" draggable="true" data-id="{{ colinha.pk }}">
+            <div class="drag-handle" title="Arrastar para reordenar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </div>
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
                     <h3 class="colinha-title" style="margin-bottom: 0;">{{ colinha.titulo }}</h3>
                     <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn-icon btn-favorito" onclick="toggleFavorito({{ colinha.pk }}, this)" title="Adicionar aos favoritos">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </button>
                         <button class="btn-icon" onclick="abrirModalEdicao({{ colinha.pk }}, '{{ colinha.titulo|escapejs }}', `{{ colinha.conteudo|escapejs }}`)" title="Editar">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
                         </button>
@@ -101,77 +155,6 @@
     </div>
 </div>
 
-<script>
-    function copyToClipboard(elementId, btn) {
-        const text = document.getElementById(elementId).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = btn.innerHTML;
-            btn.classList.add('copied');
-            btn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                Copiado!
-            `;
-            
-            setTimeout(() => {
-                btn.classList.remove('copied');
-                btn.innerHTML = originalText;
-            }, 2000);
-        });
-    }
-
-    function abrirModalAdicao() {
-        document.getElementById('modalAdicao').style.display = 'flex';
-    }
-
-    function fecharModalAdicao() {
-        document.getElementById('modalAdicao').style.display = 'none';
-    }
-
-    function abrirModalEdicao(pk, titulo, conteudo) {
-        const modal = document.getElementById('modalEdicao');
-        const form = document.getElementById('formEdicao');
-        
-        document.getElementById('editTitulo').value = titulo;
-        document.getElementById('editConteudo').value = conteudo;
-        form.action = "{% url 'editar_colinha' 0 %}".replace('0', pk);
-        
-        modal.style.display = 'flex';
-    }
-
-    function fecharModalEdicao() {
-        document.getElementById('modalEdicao').style.display = 'none';
-    }
-
-    function abrirModalExclusao(pk, titulo) {
-        const modal = document.getElementById('modalExclusao');
-        const form = document.getElementById('formExclusao');
-        
-        document.getElementById('tituloExclusao').innerText = titulo;
-        form.action = "{% url 'excluir_colinha' 0 %}".replace('0', pk);
-        
-        modal.style.display = 'flex';
-    }
-
-    function fecharModalExclusao() {
-        document.getElementById('modalExclusao').style.display = 'none';
-    }
-
-    // Fechar modal ao clicar fora
-    window.onclick = function(event) {
-        const modalAdicao = document.getElementById('modalAdicao');
-        const modalEdicao = document.getElementById('modalEdicao');
-        const modalExclusao = document.getElementById('modalExclusao');
-        
-        if (event.target == modalAdicao) {
-            fecharModalAdicao();
-        }
-        if (event.target == modalEdicao) {
-            fecharModalEdicao();
-        }
-        if (event.target == modalExclusao) {
-            fecharModalExclusao();
-        }
-    }
-</script>
+<script src="{% static 'scripts/colinha.js' %}"></script>
 </main>
 {% endblock %}
