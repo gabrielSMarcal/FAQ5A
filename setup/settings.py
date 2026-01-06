@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 
+import dj_database_url
 import os
 import sys
 
@@ -74,15 +75,23 @@ WSGI_APPLICATION = 'setup.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'faq',
+#         'USER': 'postgres',
+#         'PASSWORD': str(os.getenv('DB_PASSWORD')),
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'faq',
-        'USER': 'postgres',
-        'PASSWORD': str(os.getenv('DB_PASSWORD')),
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3', 
+        conn_max_age=800,
+        ssl_require=True if os.getenv('RENDER') else False # Exige SSL apenas no Render
+    )
 }
 
 
