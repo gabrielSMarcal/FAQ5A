@@ -95,7 +95,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Drag and Drop - Sistema Aprimorado
+// Drag and Drop - Lógica de Proximidade Euclidiana para Grids
 let draggedElement = null;
 let draggedGrid = null;
 let placeholder = null;
@@ -104,8 +104,9 @@ function createPlaceholder() {
     const div = document.createElement('div');
     div.className = 'colinha-card drag-placeholder';
     div.style.border = '2px dashed var(--primary-color)';
-    div.style.background = 'rgba(var(--primary-color-rgb), 0.05)';
+    div.style.background = 'rgba(0, 69, 196, 0.05)';
     div.style.minHeight = '150px';
+    div.style.pointerEvents = 'none';
     return div;
 }
 
@@ -121,42 +122,30 @@ function initDragAndDrop() {
     grids.forEach(grid => {
         grid.addEventListener('dragover', handleDragOver);
         grid.addEventListener('drop', handleDrop);
-        grid.addEventListener('dragenter', handleDragEnter);
     });
 }
 
 function handleDragStart(e) {
     draggedElement = this;
     draggedGrid = this.closest('.sortable-grid');
-    
     this.classList.add('dragging');
-    this.style.opacity = '0.4';
-    
-    // Criar placeholder
     placeholder = createPlaceholder();
+    e.dataTransfer.setData('text/plain', '');
+    e.dataTransfer.effectAllowed = 'move';
 }
 
 function handleDragEnd(e) {
     this.classList.remove('dragging');
-    this.style.opacity = '';
-    
-    // Remover placeholder se existir
     if (placeholder && placeholder.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
     }
-    
     draggedElement = null;
     draggedGrid = null;
     placeholder = null;
 }
 
-function handleDragEnter(e) {
-    e.preventDefault();
-}
-
 function handleDragOver(e) {
     e.preventDefault();
-    
     if (!draggedElement || draggedGrid !== this) return;
     
     const afterElement = getDragAfterElement(this, e.clientX, e.clientY);
@@ -170,61 +159,58 @@ function handleDragOver(e) {
 
 function handleDrop(e) {
     e.preventDefault();
-    
     if (!draggedElement || draggedGrid !== this) return;
     
-    // Substituir placeholder pelo elemento arrastado
     if (placeholder && placeholder.parentNode) {
         placeholder.parentNode.insertBefore(draggedElement, placeholder);
         placeholder.parentNode.removeChild(placeholder);
     }
     
-    // Salvar a nova ordem
     salvarOrdem(this);
 }
 
+/**
+ * Determina a posição correta no grid considerando o fluxo natural (esquerda->direita, cima->baixo)
+ */
 function getDragAfterElement(container, x, y) {
-    const draggableElements = [...container.querySelectorAll('.draggable-card:not(.dragging)')];
+    const draggableElements = [...container.querySelectorAll('.draggable-card:not(.dragging):not(.drag-placeholder)')];
     
-    let closestElement = null;
-    let closestDistance = Number.POSITIVE_INFINITY;
-    
-    draggableElements.forEach(child => {
+    return draggableElements.reduce((closest, child) => {
         const box = child.getBoundingClientRect();
         
-        // Calcular o centro do card
+        // Calcula o ponto central do card
         const centerX = box.left + box.width / 2;
         const centerY = box.top + box.height / 2;
         
-        // Calcular distância do mouse até o centro do card
-        const distanceX = x - centerX;
-        const distanceY = y - centerY;
-        
-        // Distância euclidiana
-        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
-        
-        // Determinar se o mouse está "antes" deste card
-        // Considera tanto posição vertical quanto horizontal
-        const isAbove = y < centerY;
-        const isLeft = x < centerX;
-        const isBefore = isAbove || (Math.abs(y - centerY) < box.height / 2 && isLeft);
-        
-        // Atualizar o elemento mais próximo se este estiver "antes" e mais perto
-        if (isBefore && distance < closestDistance) {
-            closestDistance = distance;
-            closestElement = child;
+        // Mouse está acima do card? Inserir antes
+        if (y < box.top) {
+            return closest || child;
         }
-    });
-    
-    return closestElement;
+        
+        // Mouse está na mesma linha (aproximadamente)?
+        const isInSameRow = y >= box.top && y <= box.bottom;
+        
+        if (isInSameRow) {
+            // Se mouse está à esquerda do centro, inserir antes deste card
+            if (x < centerX) {
+                return child;
+            }
+        } else if (y > box.bottom) {
+            // Mouse está abaixo, continue procurando
+            return null;
+        }
+        
+        return closest;
+    }, null);
 }
 
 function salvarOrdem(grid) {
     const cards = grid.querySelectorAll('.draggable-card');
     const ordem = Array.from(cards).map(card => card.dataset.id);
-    const url = document.getElementById('reordenar-colinhas-url').dataset.url;
-
-    fetch(url, {
+    const urlElement = document.getElementById('reordenar-colinhas-url');
+    if (!urlElement) return;
+    
+    fetch(urlElement.dataset.url, {
         method: 'POST',
         headers: {
             'X-CSRFToken': getCookie('csrftoken'),
@@ -233,34 +219,19 @@ function salvarOrdem(grid) {
         body: JSON.stringify({ ordem: ordem })
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Ordem salva com sucesso!');
-        }
-    })
-    .catch(error => {
-        console.error('Erro ao salvar ordem:', error);
-    });
+    .catch(error => console.error('Erro ao salvar ordem:', error));
 }
 
-// Fechar modal ao clicar fora
 window.onclick = function(event) {
     const modalAdicao = document.getElementById('modalAdicao');
     const modalEdicao = document.getElementById('modalEdicao');
     const modalExclusao = document.getElementById('modalExclusao');
     
-    if (event.target == modalAdicao) {
-        fecharModalAdicao();
-    }
-    if (event.target == modalEdicao) {
-        fecharModalEdicao();
-    }
-    if (event.target == modalExclusao) {
-        fecharModalExclusao();
-    }
+    if (event.target == modalAdicao) fecharModalAdicao();
+    if (event.target == modalEdicao) fecharModalEdicao();
+    if (event.target == modalExclusao) fecharModalExclusao();
 }
 
-// Inicializar drag and drop quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
     initDragAndDrop();
 });
