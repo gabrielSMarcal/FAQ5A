@@ -113,10 +113,32 @@ function createPlaceholder() {
 function initDragAndDrop() {
     const cards = document.querySelectorAll('.draggable-card');
     const grids = document.querySelectorAll('.sortable-grid');
+    const dragHandles = document.querySelectorAll('.drag-handle');
 
     cards.forEach(card => {
-        card.addEventListener('dragstart', handleDragStart);
+        card.setAttribute('draggable', 'false');
+        
+        card.addEventListener('dragstart', function(e) {
+            // Só permite drag se o draggable estiver true
+            if (this.getAttribute('draggable') !== 'true') {
+                e.preventDefault();
+                return false;
+            }
+            handleDragStart.call(this, e);
+        });
+        
         card.addEventListener('dragend', handleDragEnd);
+    });
+
+    dragHandles.forEach(handle => {
+        handle.addEventListener('mousedown', function(e) {
+            e.stopPropagation();
+            const card = this.closest('.draggable-card');
+            card.setAttribute('draggable', 'true');
+        });
+        
+        // Garante que o cursor de drag apareça no ícone
+        handle.style.cursor = 'grab';
     });
 
     grids.forEach(grid => {
@@ -132,6 +154,10 @@ function handleDragStart(e) {
     placeholder = createPlaceholder();
     e.dataTransfer.setData('text/plain', '');
     e.dataTransfer.effectAllowed = 'move';
+    
+    // Muda o cursor para grabbing
+    const handle = this.querySelector('.drag-handle');
+    if (handle) handle.style.cursor = 'grabbing';
 }
 
 function handleDragEnd(e) {
@@ -139,6 +165,14 @@ function handleDragEnd(e) {
     if (placeholder && placeholder.parentNode) {
         placeholder.parentNode.removeChild(placeholder);
     }
+    
+    // Restaura o cursor
+    const handle = this.querySelector('.drag-handle');
+    if (handle) handle.style.cursor = 'grab';
+    
+    // Desativa o draggable após o drag terminar
+    this.setAttribute('draggable', 'false');
+    
     draggedElement = null;
     draggedGrid = null;
     placeholder = null;

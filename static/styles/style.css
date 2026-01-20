@@ -269,6 +269,8 @@ main {
     margin-bottom: 1rem;
     white-space: pre-wrap;
     border: 1px dashed var(--border-color);
+    word-break: break-all;
+    overflow-wrap: anywhere;
 }
 
 .btn-copy {
@@ -445,6 +447,16 @@ main {
 
 .btn-favorito:hover {
     color: var(--primary-color);
+}
+
+.colinha-card p {
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
 }
 
 .drag-handle {
